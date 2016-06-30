@@ -524,11 +524,11 @@ ErrHandler:
     Set GetCorpInfo = Nothing
 End Function
 '과금정보 확인
-Public Function GetChargeInfo(CorpNum As String) As PBChargeInfo
+Public Function GetChargeInfo(CorpNum As String, Optional UserID As String) As PBChargeInfo
 On Error GoTo ErrHandler
     Dim result As Variant
        
-    Set result = httpGET("/HomeTax/Cashbill/ChargeInfo", getSession_token(CorpNum), "")
+    Set result = httpGET("/HomeTax/Cashbill/ChargeInfo", getSession_token(CorpNum), UserID)
     
     Set GetChargeInfo = New PBChargeInfo
         
@@ -542,7 +542,7 @@ ErrHandler:
 End Function
 
 '수집 요청
-Public Function RequestJob(CorpNum As String, tiType As KeyType, SDate As String, EDate As String) As String
+Public Function RequestJob(CorpNum As String, tiType As KeyType, SDate As String, EDate As String, Optional UserID As String) As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
@@ -550,7 +550,7 @@ On Error GoTo ErrHandler
     
     strKeyType = IIf(tiType = BUY, "BUY", "SELL")
     
-    Set result = httpPOST("/HomeTax/Cashbill/" + strKeyType + "?SDate=" + SDate + "&EDate=" + EDate, getSession_token(CorpNum), "", "")
+    Set result = httpPOST("/HomeTax/Cashbill/" + strKeyType + "?SDate=" + SDate + "&EDate=" + EDate, getSession_token(CorpNum), "", UserID)
     
     RequestJob = result.Item("jobID")
     Exit Function
@@ -560,7 +560,7 @@ ErrHandler:
     RequestJob = ""
 End Function
 
-Public Function GetJobState(CorpNum As String, jobID As String) As PBHTCashbillJobState
+Public Function GetJobState(CorpNum As String, jobID As String, Optional UserID As String) As PBHTCashbillJobState
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -569,7 +569,7 @@ On Error GoTo ErrHandler
     
     Dim result As Variant
         
-    Set result = httpGET("/HomeTax/Cashbill/" + jobID + "/State", getSession_token(CorpNum), "")
+    Set result = httpGET("/HomeTax/Cashbill/" + jobID + "/State", getSession_token(CorpNum), UserID)
     
     Set GetJobState = New PBHTCashbillJobState
         
@@ -583,13 +583,13 @@ ErrHandler:
     Set GetJobState = Nothing
 End Function
 
-Public Function ListActiveJob(CorpNum As String) As Collection
+Public Function ListActiveJob(CorpNum As String, Optional UserID As String) As Collection
 On Error GoTo ErrHandler
    
     Dim result As Variant
     
     Set result = httpGET("/HomeTax/Cashbill/JobList", _
-                                getSession_token(CorpNum), "")
+                                getSession_token(CorpNum), UserID)
     
     Set ListActiveJob = New Collection
     
@@ -613,7 +613,7 @@ ErrHandler:
     Set ListActiveJob = Nothing
 End Function
 
-Public Function Search(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, page As Integer, perPage As Integer, order As String) As PBHTCashbillSearch
+Public Function Search(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, page As Integer, perPage As Integer, order As String, Optional UserID As String) As PBHTCashbillSearch
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -656,7 +656,7 @@ On Error GoTo ErrHandler
     uri = uri + "&PerPage=" + CStr(perPage)
     uri = uri + "&Order=" + order
     
-    Set result = httpGET(uri, getSession_token(CorpNum), "")
+    Set result = httpGET(uri, getSession_token(CorpNum), UserID)
     
     Set Search = New PBHTCashbillSearch
     
@@ -670,7 +670,7 @@ ErrHandler:
     Set Search = Nothing
 End Function
 
-Public Function Summary(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection) As PBHTCashbillSummary
+Public Function Summary(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, Optional UserID As String) As PBHTCashbillSummary
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -708,7 +708,7 @@ On Error GoTo ErrHandler
     End If
 
         
-    Set result = httpGET(uri, getSession_token(CorpNum), "")
+    Set result = httpGET(uri, getSession_token(CorpNum), UserID)
     
     Set Summary = New PBHTCashbillSummary
     
@@ -751,12 +751,12 @@ ErrHandler:
     GetCertificatePopUpURL = ""
 End Function
 
-Public Function GetFlatRateState(CorpNum As String) As PBHTCashbillFlatRate
+Public Function GetFlatRateState(CorpNum As String, Optional UserID As String) As PBHTCashbillFlatRate
 On Error GoTo ErrHandler
         
     Dim result As Variant
         
-    Set result = httpGET("/HomeTax/Cashbill/Contract", getSession_token(CorpNum), "")
+    Set result = httpGET("/HomeTax/Cashbill/Contract", getSession_token(CorpNum), UserID)
     
     Set GetFlatRateState = New PBHTCashbillFlatRate
         
@@ -770,11 +770,11 @@ ErrHandler:
     Set GetFlatRateState = Nothing
 End Function
 
-Public Function GetCertificateExpireDate(CorpNum As String) As String
+Public Function GetCertificateExpireDate(CorpNum As String, Optional UserID As String) As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
-    Set result = httpGET("/HomeTax/Cashbill/CertInfo", getSession_token(CorpNum), "")
+    Set result = httpGET("/HomeTax/Cashbill/CertInfo", getSession_token(CorpNum), UserID)
     
     GetCertificateExpireDate = result.Item("certificateExpiration")
     Exit Function
