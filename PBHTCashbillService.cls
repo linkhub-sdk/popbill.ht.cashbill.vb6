@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Author : Jeong Yohan (code@linkhub.co.kr)
 ' Written : 2016-06-28
-' Updated : 2016-06-28
+' Updated : 2017-02-23
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -286,7 +286,7 @@ ErrHandler:
     Set CheckID = Nothing
 End Function
 '연동회원 담당자 목록조회
-Public Function ListContact(CorpNum As String, UserID As String) As Collection
+Public Function ListContact(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler
         
     Dim result As Variant
@@ -314,7 +314,7 @@ ErrHandler:
     Set ListContact = Nothing
 End Function
 '담당자 추가
-Public Function RegistContact(CorpNum As String, ContactInfo As PBContactInfo, UserID As String) As PBResponse
+Public Function RegistContact(CorpNum As String, ContactInfo As PBContactInfo, Optional UserID As String = "") As PBResponse
 On Error GoTo ErrHandler
     Set RegistContact = Nothing
     
@@ -382,7 +382,7 @@ ErrHandler:
     m_LastErrMessage = Err.Description
 End Function
 '회사정보 수정
-Public Function UpdateCorpInfo(CorpNum As String, CorpInfo As PBCorpInfo, UserID As String) As PBResponse
+Public Function UpdateCorpInfo(CorpNum As String, CorpInfo As PBCorpInfo, Optional UserID As String = "") As PBResponse
 On Error GoTo ErrHandler
     Set UpdateCorpInfo = Nothing
     
@@ -507,7 +507,7 @@ ErrHandler:
     m_LastErrMessage = Err.Description
 End Function
 '회사정보 조회
-Public Function GetCorpInfo(CorpNum As String, UserID As String) As PBCorpInfo
+Public Function GetCorpInfo(CorpNum As String, Optional UserID As String = "") As PBCorpInfo
 On Error GoTo ErrHandler
     Dim result As Variant
        
@@ -524,7 +524,7 @@ ErrHandler:
     Set GetCorpInfo = Nothing
 End Function
 '과금정보 확인
-Public Function GetChargeInfo(CorpNum As String, Optional UserID As String) As PBChargeInfo
+Public Function GetChargeInfo(CorpNum As String, Optional UserID As String = "") As PBChargeInfo
 On Error GoTo ErrHandler
     Dim result As Variant
        
@@ -542,7 +542,7 @@ ErrHandler:
 End Function
 
 '수집 요청
-Public Function RequestJob(CorpNum As String, tiType As KeyType, SDate As String, EDate As String, Optional UserID As String) As String
+Public Function RequestJob(CorpNum As String, tiType As KeyType, SDate As String, EDate As String, Optional UserID As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
@@ -560,7 +560,7 @@ ErrHandler:
     RequestJob = ""
 End Function
 
-Public Function GetJobState(CorpNum As String, jobID As String, Optional UserID As String) As PBHTCashbillJobState
+Public Function GetJobState(CorpNum As String, jobID As String, Optional UserID As String = "") As PBHTCashbillJobState
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -583,7 +583,7 @@ ErrHandler:
     Set GetJobState = Nothing
 End Function
 
-Public Function ListActiveJob(CorpNum As String, Optional UserID As String) As Collection
+Public Function ListActiveJob(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler
    
     Dim result As Variant
@@ -613,7 +613,7 @@ ErrHandler:
     Set ListActiveJob = Nothing
 End Function
 
-Public Function Search(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, page As Integer, perPage As Integer, order As String, Optional UserID As String) As PBHTCashbillSearch
+Public Function Search(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, page As Integer, perPage As Integer, order As String, Optional UserID As String = "") As PBHTCashbillSearch
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -670,7 +670,7 @@ ErrHandler:
     Set Search = Nothing
 End Function
 
-Public Function Summary(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, Optional UserID As String) As PBHTCashbillSummary
+Public Function Summary(CorpNum As String, jobID As String, tradeType As Collection, tradeUsage As Collection, Optional UserID As String = "") As PBHTCashbillSummary
 On Error GoTo ErrHandler
 
     If Not Len(jobID) = 18 Then
@@ -723,7 +723,7 @@ ErrHandler:
 End Function
 
 
-Public Function GetFlatRatePopUpURL(CorpNum As String, UserID As String) As String
+Public Function GetFlatRatePopUpURL(CorpNum As String, Optional UserID As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
@@ -737,7 +737,7 @@ ErrHandler:
     GetFlatRatePopUpURL = ""
 End Function
 
-Public Function GetCertificatePopUpURL(CorpNum As String, UserID As String) As String
+Public Function GetCertificatePopUpURL(CorpNum As String, Optional UserID As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
@@ -751,7 +751,7 @@ ErrHandler:
     GetCertificatePopUpURL = ""
 End Function
 
-Public Function GetFlatRateState(CorpNum As String, Optional UserID As String) As PBHTCashbillFlatRate
+Public Function GetFlatRateState(CorpNum As String, Optional UserID As String = "") As PBHTCashbillFlatRate
 On Error GoTo ErrHandler
         
     Dim result As Variant
@@ -770,7 +770,7 @@ ErrHandler:
     Set GetFlatRateState = Nothing
 End Function
 
-Public Function GetCertificateExpireDate(CorpNum As String, Optional UserID As String) As String
+Public Function GetCertificateExpireDate(CorpNum As String, Optional UserID As String = "") As String
 On Error GoTo ErrHandler
     Dim result As Variant
     
@@ -783,6 +783,3 @@ ErrHandler:
     m_LastErrMessage = Err.Description
     GetCertificateExpireDate = ""
 End Function
-
-
-
