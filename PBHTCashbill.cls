@@ -32,6 +32,8 @@ Public customerName         As String       '고객명
 Public cardOwnerName        As String       '카드소유자명
 Public deductionType        As String       '공제유형
 
+Public invoiceType        As String          '매출/매입
+
 Public Sub fromDictionary(dic As Variant)
     
     ntsconfirmNum = dic.Item("ntsconfirmNum")
@@ -52,6 +54,8 @@ Public Sub fromDictionary(dic As Variant)
     customerName = dic.Item("customerName")
     cardOwnerName = dic.Item("cardOwnerName")
     deductionType = dic.Item("deductionType")
+    
+    invoiceType = dic.Item("invoiceType")
     
 End Sub
 
