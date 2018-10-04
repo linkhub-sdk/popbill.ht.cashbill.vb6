@@ -14,6 +14,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public ntsconfirmNum        As String       '국세청승인번호
+Public tradeDate            As String       '거래일자
 Public tradeDT              As String       '거래일시
 Public tradeUsage           As String       '거래유형
 Public tradeType            As String       '현금영수증 형태
@@ -37,6 +38,7 @@ Public invoiceType        As String          '매출/매입
 Public Sub fromDictionary(dic As Variant)
     
     ntsconfirmNum = dic.Item("ntsconfirmNum")
+    tradeDate = dic.Item("tradeDate")
     tradeDT = dic.Item("tradeDT")
     tradeUsage = dic.Item("tradeUsage")
     tradeType = dic.Item("tradeType")
