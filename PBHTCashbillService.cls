@@ -25,7 +25,7 @@ Option Explicit
 ' Written : 2016-06-28
 ' Updated : 2017-08-30
 ' Contributor : Kim EunHye (code@linkhub.co.kr)
-' Updated : 2018-10-04
+' Updated : 2018-10-08
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -274,6 +274,10 @@ End Function
 '연동회원 아이디 중복 확인
 Public Function CheckID(IDString As String) As PBResponse
 On Error GoTo ErrHandler
+    If IDString = "" Then
+        Err.Raise -99999999, "POPBILL", "중복여부를 확인할 아이디가 입력되지 않았습니다."
+    End If
+
     Dim result As Variant
     
     Set result = httpGET("/IDCheck?ID=" + IDString, "")
@@ -470,6 +474,14 @@ End Function
 '회원가입 여부
 Public Function CheckIsMember(CorpNum As String, linkID As String) As PBResponse
 On Error GoTo ErrHandler
+    If CorpNum = "" Then
+        Err.Raise -99999999, "POPBILL", "팝빌회원의 사업자번호가 입력되지 않았습니다."
+    End If
+
+    If linkID = "" Then
+        Err.Raise -99999999, "POPBILL", "링크아이디(LinkID)가 입력되지 않았습니다."
+    End If
+    
     Dim result As Variant
     
     Set result = httpGET("/Join?CorpNum=" + CorpNum + "&LID=" + linkID, "")
