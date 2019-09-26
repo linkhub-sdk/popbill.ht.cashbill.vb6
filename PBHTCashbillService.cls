@@ -23,8 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Author : Jeong Yohan (code@linkhub.co.kr)
 ' Written : 2016-06-28
-' Contributor : Kim Hyunjin (code@linkhub.co.kr)
-' Updated : 2018-11-21
+' Updated : 2019-09-26
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -35,6 +34,7 @@ Private Const ServiceURL_TEST = "https://popbill-test.linkhub.co.kr"
 Private Const APIVersion = "1.0"
 
 Private m_IsTest As Boolean
+Private m_IPRestrictOnOff As Boolean
 Private m_Linkhub As Linkhub
 Private m_scope As New Collection
 Private m_LastErrCode As Long
@@ -124,6 +124,11 @@ End Property
 Public Property Let IsTest(ByVal value As Boolean)
     m_IsTest = value
 End Property
+
+Public Property Let IPRestrictOnOff(ByVal value As Boolean)
+    m_IPRestrictOnOff = value
+End Property
+
 '√ ±‚»≠
 Public Sub Initialize(linkID As String, SecretKey As String)
     Set m_Linkhub = New Linkhub
@@ -137,6 +142,7 @@ Public Sub Initialize(linkID As String, SecretKey As String)
     m_scope.Add "141"
     
     m_IsTest = False
+    m_IPRestrictOnOff = True
     
 End Sub
 Private Function getSession_token(CorpNum As String) As String
@@ -161,7 +167,7 @@ Private Function getSession_token(CorpNum As String) As String
     
     If refresh Then
     
-        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope)
+        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope, IIf(m_IPRestrictOnOff, "", "*"))
         
         If m_Token Is Nothing Then
             Err.Raise m_Linkhub.LastErrCode, "POPBILL", m_Linkhub.LastErrMessage
