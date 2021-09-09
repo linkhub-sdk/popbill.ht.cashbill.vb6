@@ -31,10 +31,16 @@ Private Const ServiceID_REAL = "POPBILL"
 Private Const ServiceID_TEST = "POPBILL_TEST"
 Private Const ServiceURL_REAL = "https://popbill.linkhub.co.kr"
 Private Const ServiceURL_TEST = "https://popbill-test.linkhub.co.kr"
+Private Const ServiceURL_Static_REAL = "https://static-popbill.linkhub.co.kr"
+Private Const ServiceURL_Static_TEST = "https://static-popbill-test.linkhub.co.kr"
+Private Const ServiceURL_GA_REAL = "https://ga-popbill.linkhub.co.kr"
+Private Const ServiceURL_GA_TEST = "https://ga-popbill-test.linkhub.co.kr"
 Private Const APIVersion = "1.0"
 
 Private m_IsTest As Boolean
 Private m_IPRestrictOnOff As Boolean
+Private m_UseStaticIP As Boolean
+Private m_UseGAIP As Boolean
 Private m_Linkhub As Linkhub
 Private m_scope As New Collection
 Private m_LastErrCode As Long
@@ -129,6 +135,14 @@ Public Property Let IPRestrictOnOff(ByVal value As Boolean)
     m_IPRestrictOnOff = value
 End Property
 
+Public Property Let UseStaticIP(ByVal value As Boolean)
+    m_UseStaticIP = value
+End Property
+
+Public Property Let UseGAIP(ByVal value As Boolean)
+    m_UseGAIP = value
+End Property
+
 '√ ±‚»≠
 Public Sub Initialize(linkID As String, SecretKey As String)
     Set m_Linkhub = New Linkhub
@@ -143,8 +157,20 @@ Public Sub Initialize(linkID As String, SecretKey As String)
     
     m_IsTest = False
     m_IPRestrictOnOff = True
-    
+    m_UseStaticIP = False
+    m_UseGAIP = False
 End Sub
+
+Private Function getTargetURL() As String
+    If m_UseGAIP Then
+        getTargetURL = IIf(m_IsTest, ServiceURL_GA_TEST, ServiceURL_GA_REAL)
+    ElseIf m_UseStaticIP Then
+        getTargetURL = IIf(m_IsTest, ServiceURL_Static_TEST, ServiceURL_Static_REAL)
+    Else
+        getTargetURL = IIf(m_IsTest, ServiceURL_TEST, ServiceURL_REAL)
+    End If
+End Function
+
 Private Function getSession_token(CorpNum As String) As String
     Dim refresh As Boolean
     
@@ -161,13 +187,13 @@ Private Function getSession_token(CorpNum As String) As String
         refresh = True
     Else
         Dim utcnow As String
-        utcnow = m_Linkhub.GetTime()
+        utcnow = m_Linkhub.GetTime(m_UseStaticIP, m_UseGAIP)
         refresh = m_Token.expiration < utcnow
     End If
     
     If refresh Then
     
-        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope, IIf(m_IPRestrictOnOff, "", "*"))
+        Set m_Token = m_Linkhub.getToken(IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), CorpNum, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_UseStaticIP, m_UseGAIP)
         
         If m_Token Is Nothing Then
             Err.Raise m_Linkhub.LastErrCode, "POPBILL", m_Linkhub.LastErrMessage
@@ -191,7 +217,7 @@ Private Function httpGET(url As String, BearerToken As String, Optional UserID A
     Dim winhttp1
     
     Set winhttp1 = CreateObject("MSXML2.XMLHTTP.6.0")
-    Call winhttp1.Open("GET", IIf(m_IsTest, ServiceURL_TEST, ServiceURL_REAL) + url, False)
+    Call winhttp1.Open("GET", getTargetURL() + url, False)
     
     Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
     Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
@@ -235,7 +261,7 @@ Private Function httpPOST_override(url As String, BearerToken As String, overrid
     Dim winhttp1
     
     Set winhttp1 = CreateObject("MSXML2.XMLHTTP.6.0")
-    Call winhttp1.Open("POST", IIf(m_IsTest, ServiceURL_TEST, ServiceURL_REAL) + url, False)
+    Call winhttp1.Open("POST", getTargetURL() + url, False)
     Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
     Call winhttp1.setRequestHeader("Accept-Encoding", "gzip,deflate")
     
@@ -428,7 +454,7 @@ End Function
 Public Function GetBalance(CorpNum As String) As Double
     On Error GoTo ErrHandler
     
-    GetBalance = m_Linkhub.GetBalance(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL))
+    GetBalance = m_Linkhub.GetBalance(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), m_UseStaticIP, m_UseGAIP)
     
     Exit Function
 ErrHandler:
@@ -440,7 +466,7 @@ End Function
 Public Function GetPartnerBalance(CorpNum As String) As Double
     On Error GoTo ErrHandler
     
-    GetPartnerBalance = m_Linkhub.GetPartnerBalance(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL))
+    GetPartnerBalance = m_Linkhub.GetPartnerBalance(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), m_UseStaticIP, m_UseGAIP)
     
     Exit Function
 ErrHandler:
@@ -453,7 +479,7 @@ End Function
 Public Function GetPartnerURL(CorpNum As String, TOGO As String) As String
     On Error GoTo ErrHandler
     
-    GetPartnerURL = m_Linkhub.GetPartnerURL(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), TOGO)
+    GetPartnerURL = m_Linkhub.GetPartnerURL(getSession_token(CorpNum), IIf(m_IsTest, ServiceID_TEST, ServiceID_REAL), TOGO, m_UseStaticIP, m_UseGAIP)
     
     Exit Function
 ErrHandler:
