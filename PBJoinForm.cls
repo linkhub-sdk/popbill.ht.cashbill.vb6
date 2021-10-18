@@ -23,10 +23,12 @@ Public bizType         As String
 Public bizClass        As String
 Public id              As String
 Public pwd             As String
+Public Password        As String
 Public ContactName     As String
 Public ContactTEL      As String
 Public ContactHP       As String
 Public ContactFAX      As String
 Public ContactEmail    As String
+
 
 

@@ -23,7 +23,7 @@ Option Explicit
 ' http://www.popbill.com
 ' Author : Jeong Yohan (code@linkhub.co.kr)
 ' Written : 2016-06-28
-' Updated : 2021-10-07
+' Updated : 2021-10-18
 '
 ' Thanks for your interest.
 '=================================================================================
@@ -328,6 +328,33 @@ ErrHandler:
     m_LastErrMessage = Err.Description
     Set CheckID = Nothing
 End Function
+
+'연동회원 담당자 정보확인
+Public Function GetContactInfo(CorpNum As String, ContactID As String, Optional UserID As String = "") As PBContactInfo
+On Error GoTo ErrHandler
+    Dim result As Variant
+    Dim postdata As String
+    
+    Dim tmp
+    Set tmp = CreateObject("Scripting.Dictionary")
+    
+    tmp.Add "id", ContactID
+            
+    postdata = m_Linkhub.toString(tmp)
+    
+    
+    Set result = httpPOST("/Contact", getSession_token(CorpNum), postdata, UserID)
+    
+    Set GetContactInfo = New PBContactInfo
+    GetContactInfo.fromDictionary result
+    
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.Number
+    m_LastErrMessage = Err.Description
+    Set GetContactInfo = Nothing
+End Function
+
 '연동회원 담당자 목록조회
 Public Function ListContact(CorpNum As String, Optional UserID As String = "") As Collection
 On Error GoTo ErrHandler
@@ -368,6 +395,7 @@ On Error GoTo ErrHandler
     
     tmp.Add "id", ContactInfo.id
     tmp.Add "pwd", ContactInfo.pwd
+    tmp.Add "Password", ContactInfo.Password
     tmp.Add "personName", ContactInfo.personName
     tmp.Add "tel", ContactInfo.tel
     tmp.Add "hp", ContactInfo.hp
@@ -375,12 +403,13 @@ On Error GoTo ErrHandler
     tmp.Add "email", ContactInfo.email
     tmp.Add "searchAllAllowYN", ContactInfo.searchAllAllowYN
     tmp.Add "mgrYN", ContactInfo.mgrYN
+    tmp.Add "searchRole", ContactInfo.searchRole
             
     postdata = m_Linkhub.toString(tmp)
     
     Dim result As Variant
     
-    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postdata)
+    Set result = httpPOST("/IDs/New", getSession_token(CorpNum), postdata, UserID)
     
     Set RegistContact = New PBResponse
     
@@ -409,6 +438,7 @@ On Error GoTo ErrHandler
     tmp.Add "email", ContactInfo.email
     tmp.Add "searchAllAllowYN", ContactInfo.searchAllAllowYN
     tmp.Add "mgrYN", ContactInfo.mgrYN
+    tmp.Add "searchRole", ContactInfo.searchRole
             
     postdata = m_Linkhub.toString(tmp)
     
@@ -538,6 +568,37 @@ ErrHandler:
    m_LastErrMessage = Err.Description
    GetChargeURL = ""
 End Function
+
+'팝빌 연동회원 포인트 결제내역 팝업 URL
+Public Function GetPaymentURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/?TG=PAYMENT", getSession_token(CorpNum), UserID)
+    
+    GetPaymentURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.Number
+    m_LastErrMessage = Err.Description
+    GetPaymentURL = ""
+End Function
+
+'팝빌 연동회원 포인트 사용내역 팝업 URL
+Public Function GetUseHistoryURL(CorpNum As String, UserID As String) As String
+On Error GoTo ErrHandler
+    Dim result As Variant
+    
+    Set result = httpGET("/?TG=USEHISTORY", getSession_token(CorpNum), UserID)
+    
+    GetUseHistoryURL = result.Item("url")
+    Exit Function
+ErrHandler:
+    m_LastErrCode = Err.Number
+    m_LastErrMessage = Err.Description
+    GetUseHistoryURL = ""
+End Function
+
 '회원가입 여부
 Public Function CheckIsMember(CorpNum As String, linkID As String) As PBResponse
 On Error GoTo ErrHandler
@@ -577,6 +638,7 @@ On Error GoTo ErrHandler
     tmp.Add "CorpName", JoinInfo.corpName
     tmp.Add "CEOName", JoinInfo.ceoname
     tmp.Add "Addr", JoinInfo.addr
+    tmp.Add "ZipCode", JoinInfo.ZipCode
     tmp.Add "BizClass", JoinInfo.bizClass
     tmp.Add "BizType", JoinInfo.bizType
     tmp.Add "ContactName", JoinInfo.ContactName
@@ -586,6 +648,7 @@ On Error GoTo ErrHandler
     tmp.Add "ContactTEL", JoinInfo.ContactTEL
     tmp.Add "ID", JoinInfo.id
     tmp.Add "PWD", JoinInfo.pwd
+    tmp.Add "Password", JoinInfo.Password
     
     postdata = m_Linkhub.toString(tmp)
     
