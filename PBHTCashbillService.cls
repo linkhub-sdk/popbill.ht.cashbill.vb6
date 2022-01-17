@@ -21,9 +21,9 @@ Option Explicit
 ' on system32 by default.
 '
 ' http://www.popbill.com
-' Author : Jeong Yohan (code@linkhub.co.kr)
+' Author : Jeong Yohan (code@linkhubcorp.com)
 ' Written : 2016-06-28
-' Updated : 2021-10-18
+' Updated : 2022-01-17
 '
 ' Thanks for your interest.
 '=================================================================================
